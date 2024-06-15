@@ -1,15 +1,13 @@
 #!/bin/bash
-set -x;
-
 # create enviorment files
 cp ./.env.example ./.env;
 cp ./.env.example ./.env.testing;
 # .env
-sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=123/' .env
+sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=1234/' .env
 sed -i 's/^DB_USERNAME=.*/DB_USERNAME=default/' .env
 sed -i 's/^DB_HOST.*/DB_HOST=db/' .env
 # .env.testing
-sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=123/' .env.testing
+sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=1234/' .env.testing
 sed -i 's/^DB_USERNAME=.*/DB_USERNAME=default/' .env.testing
 sed -i 's/^DB_HOST=.*/DB_HOST=db-test/' .env.testing
 sed -i 's/^DB_PORT=.*/DB_PORT=33060/' .env.testing
@@ -50,3 +48,8 @@ echo "server {
     }
 }" > ./docker-compose/nginx/conf.d/default.conf;
 docker restart transactions-nginx;
+
+# Friendly message
+echo -e "\n---------------------------------------------------------------\n
+| Done! The application is available on port 3001 on your PC. |\n
+---------------------------------------------------------------";
