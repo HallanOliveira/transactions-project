@@ -16,7 +16,7 @@ Follow the steps below, to install the application with docker:
 git clone https://github.com/HallanOliveira/transactions_project.git
 ```
 ```
-cd transactions_project
+cd transactions-project
 ```
 ```
 sh ./scripts/build.sh
