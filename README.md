@@ -13,7 +13,7 @@ Ports available: 3001
 #### Installation
 Follow the steps below, to install the application with docker:
 ```
-git clone https://github.com/HallanOliveira/transactions_project.git
+git clone https://github.com/HallanOliveira/transactions-project.git
 ```
 ```
 cd transactions-project
