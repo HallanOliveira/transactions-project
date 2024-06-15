@@ -18,6 +18,14 @@ sed -i 's/^DB_PORT=.*/DB_PORT=33060/' .env.testing
 cp ./docker-compose-example.yml ./docker-compose.yml;
 docker compose up -d --build;
 
+# install dependencies and configure application
+docker exec -i transactions-app chmod -R 777 storage storage/logs;
+docker exec -i transactions-app composer install;
+docker exec -i transactions-app php artisan key:generate;
+docker exec -i transactions-app php artisan optimize;
+docker exec -i transactions-app chmod -R 777 storage bootstrap/cache;
+docker exec -i transactions-app php artisan migrate;
+
 # nginx config
 echo "server {
     listen 80;
@@ -27,26 +35,18 @@ echo "server {
     index index.php index.html index.htm;
 
     location / {
-        try_files $uri $uri/ /index.php?$query_string;
+        try_files \$uri \$uri/ /index.php?\$query_string;
     }
 
     location ~ \.php$ {
         fastcgi_pass app:9000;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        fastcgi_param PATH_INFO \$fastcgi_path_info;
         include fastcgi_params;
     }
 
     location ~ /\.ht {
         deny all;
     }
-}" >> ./docker-compose/nginx/conf.d/default.conf;
-docker compose restart nginx;
-
-# install dependencies and configure application
-docker exec -i transactions-app chmod -R 777 storage storage/logs;
-docker exec -i transactions-app composer install;
-docker exec -i transactions-app php artisan key:generate;
-docker exec -i transactions-app php artisan optimize;
-docker exec -i transactions-app chmod -R 777 storage bootstrap/cache;
-docker exec -i transactions-app php artisan migrate;
+}" > ./docker-compose/nginx/conf.d/default.conf;
+docker restart transactions-nginx;
