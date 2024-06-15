@@ -6,13 +6,13 @@ cp ./.env.example ./.env;
 cp ./.env.example ./.env.testing;
 # .env
 sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=123/' .env
-sed -i 's/^DB_USERNAME=root/DB_USERNAME=default/' .env
-sed -i 's/^DB_HOST=db/DB_HOST=db/' .env
+sed -i 's/^DB_USERNAME=.*/DB_USERNAME=default/' .env
+sed -i 's/^DB_HOST.*/DB_HOST=db/' .env
 # .env.testing
 sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=123/' .env.testing
-sed -i 's/^DB_USERNAME=root/DB_USERNAME=default/' .env.testing
-sed -i 's/^DB_HOST=db/DB_HOST=db-test/' .env.testing
-sed -i 's/^DB_PORT=3306/DB_PORT=33060/' .env.testing
+sed -i 's/^DB_USERNAME=.*/DB_USERNAME=default/' .env.testing
+sed -i 's/^DB_HOST=.*/DB_HOST=db-test/' .env.testing
+sed -i 's/^DB_PORT=.*/DB_PORT=33060/' .env.testing
 
 # configure, build and run docker
 cp ./docker-compose-example.yml ./docker-compose.yml;
@@ -41,6 +41,7 @@ echo "server {
         deny all;
     }
 }" >> ./docker-compose/nginx/conf.d/default.conf;
+docker compose restart nginx;
 
 # install dependencies and configure application
 docker exec -i transactions-app chmod -R 777 storage storage/logs;
