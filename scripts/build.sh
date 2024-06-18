@@ -10,7 +10,7 @@ sed -i 's/^DB_HOST.*/DB_HOST=db/' .env
 sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=1234/' .env.testing
 sed -i 's/^DB_USERNAME=.*/DB_USERNAME=default/' .env.testing
 sed -i 's/^DB_HOST=.*/DB_HOST=db-test/' .env.testing
-sed -i 's/^DB_PORT=.*/DB_PORT=33060/' .env.testing
+sed -i 's/^DB_PORT=.*/DB_PORT=3306/' .env.testing
 
 # configure, build and run docker
 cp ./docker-compose-example.yml ./docker-compose.yml;
