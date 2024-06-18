@@ -15,6 +15,10 @@ class TransferBetweenUsers
 
     public function execute(TransactionDTO $transactionDTO): TransactionDTO
     {
+        $originPerson      = $this->personRepository->get($transactionDTO->person_origin_id);
+        $destinationPerson = $this->personRepository->get($transactionDTO->person_destination_id);
+        $originPerson->transfer($destinationPerson, $transactionDTO->amount);
+
         $transactionEntity = Transaction::create(
             $transactionDTO->person_origin_id,
             $transactionDTO->type,
@@ -22,7 +26,6 @@ class TransferBetweenUsers
             $this->personRepository,
             $transactionDTO->person_destination_id
         );
-        $transactionEntity->transfer();
         return $transactionDTO;
 
     }

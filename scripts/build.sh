@@ -14,7 +14,7 @@ sed -i 's/^DB_PORT=.*/DB_PORT=3306/' .env.testing
 
 # configure, build and run docker
 cp ./docker-compose-example.yml ./docker-compose.yml;
-docker compose up -d --build;
+docker-compose up -d --build;
 
 # install dependencies and configure application
 docker exec -u root -i transactions-app chmod -R 777 storage storage/logs;
@@ -23,7 +23,7 @@ docker exec -u root -i transactions-app composer install;
 docker exec -u root -i transactions-app php artisan key:generate;
 docker exec -u root -i transactions-app php artisan optimize;
 docker exec -u root -i transactions-app chmod -R 777 storage bootstrap/cache;
-docker exec -u root -i transactions-app php artisan migrate;
+docker exec -u root -i transactions-app php artisan migrate --seed;
 
 # nginx config
 echo "server {

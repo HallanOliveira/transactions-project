@@ -22,4 +22,14 @@ class PersonRepository implements PersonRepositoryInterface
             $person->created_at
         );
     }
+
+    public function update(EntityPerson $person): bool
+    {
+        return Person::query()->update([
+            'id'              => $person->id,
+            'name'            => $person->name,
+            'document_number' => $person->document_number,
+            'document_type'   => $person->document_type,
+        ]);
+    }
 }
