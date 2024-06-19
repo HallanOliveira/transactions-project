@@ -51,8 +51,10 @@ class TransferBetweenUsers
         $transactionEntity->transfer($originPerson, $destinationPerson);
 
         if (! $this->authorizerTransactionProvider->execute($transactionEntity)) {
+            $this->dbTransactionProvider->rollback();
             throw new TransactionFailedException('Transaction not authorized.');
         }
+
         $save   = [];
         $save[] = $this->walletRepository->save($originPerson->getWallet());
         $save[] = $this->walletRepository->save($destinationPerson->getWallet());
@@ -62,7 +64,16 @@ class TransferBetweenUsers
             throw new TransactionFailedException('Transaction failed.');
         }
 
+        $outputDto = new TransactionDTO(
+            id: $transactionEntity->getId(),
+            person_origin_id: $transactionEntity->getPersonOriginId(),
+            person_destination_id: $transactionEntity->getPersonDestinationId(),
+            type: $transactionEntity->getType(),
+            amount: $transactionEntity->getAmount()
+        );
+
         $this->dbTransactionProvider->commit();
-        return $transactionDTO;
+
+        return $outputDto;
     }
 }

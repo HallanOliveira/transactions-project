@@ -42,27 +42,27 @@ class Transaction
         $destinationPerson->getWallet()->deposit($this->amount);
     }
 
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getPersonOriginId()
+    public function getPersonOriginId(): int
     {
         return $this->person_origin_id;
     }
 
-    public function getPersonDestinationId()
+    public function getPersonDestinationId(): int
     {
         return $this->person_destination_id;
     }
 
-    public function getType()
+    public function getType(): int
     {
         return $this->type;
     }
 
-    public function getAmount()
+    public function getAmount(): float
     {
         return $this->amount;
     }
