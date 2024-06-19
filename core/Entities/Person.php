@@ -3,19 +3,17 @@
 namespace Core\Entities;
 
 use Core\Enums\PersonDocumentType;
-use Core\Exceptions\DataNotFoundException;
-use Core\Exceptions\PersonTypeInvalidException;
 use Core\Entities\Wallet;
 
 class Person
 {
     public function __construct(
-        public readonly int    $id,
-        public readonly string $name,
-        public readonly string $document_number,
-        public readonly int    $document_type,
-        public readonly string $created_at,
-        public readonly ?Wallet $wallet
+        private int     $id,
+        private string  $name,
+        private string  $document_number,
+        private int     $document_type,
+        private string  $created_at,
+        private ?Wallet $wallet
     ) {
     }
 
@@ -24,24 +22,42 @@ class Person
         return $this->document_type === PersonDocumentType::CNPJ->value;
     }
 
-    public function transfer(Person $destinationPerson, $amount): void
+    public function changeDocumentType(PersonDocumentType $type)
     {
-        if (! $this->wallet instanceof Wallet) {
-            throw new DataNotFoundException('Origin Wallet not found.');
-        }
-        if (! $destinationPerson->wallet instanceof Wallet) {
-            throw new DataNotFoundException('Destination Wallet not found.');
-        }
-        if ($this->isDealerType()) {
-            throw new PersonTypeInvalidException('Dealers cannot transfer money');
-        }
+        $this->document_type = $type->value;
+    }
 
-        if ($this->id === $destinationPerson->id) {
-            throw new DataNotFoundException('The payer and payee cannot be the same');
-        }
+    public function canPerformTransactions(): bool {
+        return ! $this->isDealerType();
+    }
 
-        if ($this->document_type === $destinationPerson->document_type) {
-            throw new PersonTypeInvalidException('The payer and payee must be different types');
-        }
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getDocumentNumber()
+    {
+        return $this->document_number;
+    }
+
+    public function getDocumentType()
+    {
+        return $this->document_type;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    public function getWallet()
+    {
+        return $this->wallet;
     }
 }

@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignId('person_origin_id')->constrained('persons')->onDelete('restrict');
-            $table->foreignId('person_destination_id')->constrained('persons')->onDelete('restrict');
+            $table->foreignId('person_destination_id')->constrained('persons')->onDelete('restrict')->nullable();
             $table->string('type');
             $table->decimal('amount', 12, 2);
             $table->timestamps();

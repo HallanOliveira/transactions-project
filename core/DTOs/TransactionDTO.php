@@ -12,7 +12,6 @@ class TransactionDTO
     ) {
     }
 
-
     /**
      * @return array<string, mixed>
      */

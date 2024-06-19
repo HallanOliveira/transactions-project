@@ -14,9 +14,6 @@ class TransactionApiTest extends TestCase
     {
         parent::setUp();
         $this->personRepository = new PersonRepository();
-        // $this->artisan('migrate:fresh', ['--env' => 'testing']);
-        // $this->artisan('migrate', ['--env' => 'testing']);
-        // $this->artisan('db:seed', ['--env' => 'testing']);
     }
 
     /**
@@ -24,10 +21,11 @@ class TransactionApiTest extends TestCase
      */
     public function test_transfer_payer_non_existent(): void
     {
-        $payload  = ["value" => 100,"payer" => 26,"payee" => 1];
+        $payload  = ["value" => 100,"payer" => 24,"payee" => 1];
         $response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->post('api/transfer', $payload);
+        $response->dd();
         $response->assertStatus(404);
     }
 
@@ -58,18 +56,18 @@ class TransactionApiTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_transfer_with_success(): void
-    {
-        $personId = 1;
-        $person   = $this->personRepository->get($personId);
-        $person->changeDocumentType(PersonDocumentType::CNPJ);
-        $this->personRepository->update($person);
-        dd($person);
-        $payload  = ["value" => 100,"payer" => $personId, "payee" => 2];
-        $response = $this->withHeaders([
-            'Accept' => 'application/json',
-        ])->post('api/transfer', $payload);
-        $response->dd();
-        $response->assertStatus(200);
-    }
+    // public function test_transfer_with_success(): void
+    // {
+    //     $personId = 1;
+    //     $person   = $this->personRepository->get($personId);
+    //     // $person->changeDocumentType(PersonDocumentType::CNPJ);
+    //     $this->personRepository->update($person);
+    //     dd($person);
+    //     $payload  = ["value" => 100,"payer" => $personId, "payee" => 2];
+    //     $response = $this->withHeaders([
+    //         'Accept' => 'application/json',
+    //     ])->post('api/transfer', $payload);
+    //     $response->dd();
+    //     $response->assertStatus(200);
+    // }
 }

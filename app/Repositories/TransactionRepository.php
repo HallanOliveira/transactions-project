@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Repositories;
+namespace App\Repositories;
 
 use App\Models\Transaction;
 use Core\Entities\Transaction as EntityTransaction;
@@ -22,5 +22,21 @@ class TransactionRepository implements TransactionRepositoryInterface
             $transaction->person_destination_id,
             $transaction->created_at
         );
+    }
+
+    public function save(EntityTransaction $transaction): bool
+    {
+        return Transaction::query()->upsert([
+            'id'                    => $transaction->getId(),
+            'person_origin_id'      => $transaction->getPersonOriginId(),
+            'type'                  => $transaction->getType(),
+            'amount'                => $transaction->getAmount(),
+            'person_destination_id' => $transaction->getPersonDestinationId(),
+        ],'id');
+    }
+
+    public function saveNew(EntityTransaction $transaction): bool
+    {
+        return true;
     }
 }

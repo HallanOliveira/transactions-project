@@ -11,6 +11,9 @@ services:
             - db
         networks:
             - app-network
+        dns:
+          - 8.8.8.8
+          - 8.8.4.4
 
     nginx:
         image: nginx:alpine
@@ -24,6 +27,9 @@ services:
             - app
         networks:
             - app-network
+        dns:
+            - 8.8.8.8
+            - 8.8.4.4
 
     db:
         image: mysql:8.0
