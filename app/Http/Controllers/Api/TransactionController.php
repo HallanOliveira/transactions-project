@@ -21,10 +21,10 @@ class TransactionController extends BaseApiController
         try {
             $payload = $request->validated();
             $input   = new TransactionDTO(
-                $payload['payer'],
-                $payload['payee'] ?? null,
-                TransactionTypes::TRANSFER->value,
-                $payload['value']
+                person_origin_id: $payload['payer'],
+                person_destination_id: $payload['payee'] ?? null,
+                type: TransactionTypes::TRANSFER->value,
+                amount: $payload['value']
             );
             $output = $transferBetweenUsers->execute($input);
             return $this->successResponse('Transaferência realizada com sucesso', $output->toArray());
