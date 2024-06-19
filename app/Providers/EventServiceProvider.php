@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Events\TransferCompleted;
+use App\Listeners\SendNotification;
+use Core\Ports\TransferEventDispatcher;
+use App\Adapters\Events\TransferEventDipatcher;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -25,7 +28,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->app->bind(TransferEventDispatcher::class, TransferEventDipatcher::class);
     }
 
     /**
@@ -33,6 +36,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function shouldDiscoverEvents(): bool
     {
-        return false;
+        return true;
     }
 }
