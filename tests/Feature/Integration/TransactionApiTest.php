@@ -4,16 +4,52 @@ namespace Tests\Feature\Integration;
 
 use Tests\TestCase;
 use App\Repositories\PersonRepository;
+use App\Repositories\WalletRepository;
 use Core\Enums\PersonDocumentType;
+use App\Adapters\Api\TransactionAuthorizer;
+use App\Adapters\DBTransactionFake;
+use App\Adapters\DBTransactionLaravel;
+
 
 class TransactionApiTest extends TestCase
 {
     private PersonRepository $personRepository;
+    private WalletRepository $walletRepository;
+
 
     public function setUp(): void
     {
         parent::setUp();
         $this->personRepository = new PersonRepository();
+        $this->walletRepository = new WalletRepository();
+
+        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizer::class);
+        $transactionAuthorizerMock->method('execute')->willReturn(true);
+
+        $this->app->instance(TransactionAuthorizer::class, $transactionAuthorizerMock);
+        $this->app->instance(DBTransactionLaravel::class, app(DBTransactionFake::class));
+    }
+
+
+    /**
+     * A basic feature test example.
+     */
+    public function test_transfer_with_success(): void
+    {
+        $personId = 1;
+        $person   = $this->personRepository->get($personId);
+        $person->changeDocumentType(PersonDocumentType::CPF);
+        $this->personRepository->save($person);
+
+        $wallet = $person->getWallet();
+        $wallet->deposit(100);
+        $this->walletRepository->save($wallet);
+
+        $payload  = ["value" => 100,"payer" => $personId, "payee" => 2];
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->post('api/transfer', $payload);
+        $response->assertStatus(200);
     }
 
     /**
@@ -21,11 +57,10 @@ class TransactionApiTest extends TestCase
      */
     public function test_transfer_payer_non_existent(): void
     {
-        $payload  = ["value" => 100,"payer" => 24,"payee" => 1];
+        $payload  = ["value" => 100,"payer" => 199,"payee" => 1];
         $response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->post('api/transfer', $payload);
-        $response->dd();
         $response->assertStatus(404);
     }
 
@@ -34,7 +69,7 @@ class TransactionApiTest extends TestCase
      */
     public function test_transfer_payee_non_existent(): void
     {
-        $payload  = ["value" => 100,"payer" => 1,"payee" => 26];
+        $payload  = ["value" => 100,"payer" => 1,"payee" => 199];
         $response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->post('api/transfer', $payload);
@@ -52,22 +87,4 @@ class TransactionApiTest extends TestCase
         ])->post('api/transfer', $payload);
         $response->assertStatus(422);
     }
-
-    /**
-     * A basic feature test example.
-     */
-    // public function test_transfer_with_success(): void
-    // {
-    //     $personId = 1;
-    //     $person   = $this->personRepository->get($personId);
-    //     // $person->changeDocumentType(PersonDocumentType::CNPJ);
-    //     $this->personRepository->update($person);
-    //     dd($person);
-    //     $payload  = ["value" => 100,"payer" => $personId, "payee" => 2];
-    //     $response = $this->withHeaders([
-    //         'Accept' => 'application/json',
-    //     ])->post('api/transfer', $payload);
-    //     $response->dd();
-    //     $response->assertStatus(200);
-    // }
 }

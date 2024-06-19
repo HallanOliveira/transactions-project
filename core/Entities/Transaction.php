@@ -5,7 +5,7 @@ namespace Core\Entities;
 use Core\Exceptions\PersonTypeInvalidException;
 use Core\Ports\UuidGeneratorProvider;
 
-class Transaction extends BaseEntity
+class Transaction
 {
     public function __construct(
         private string $id,

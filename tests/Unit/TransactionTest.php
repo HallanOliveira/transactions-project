@@ -11,12 +11,8 @@ use Core\Exceptions\PersonTypeInvalidException;
 use Core\Exceptions\InsufficientBalanceException;
 use Core\Exceptions\TransactionFailedException;
 use App\Repositories\PersonRepository;
-use App\Repositories\TransactionRepository;
-use App\Repositories\WalletRepository;
-use Core\Ports\UuidGeneratorProvider;
-use Core\Ports\DBTransactionProvider;
-use App\Adapters\Api\TransactionAuthorizerTrue;
-use App\Adapters\Api\TransactionAuthorizerFalse;
+use App\Adapters\Api\TransactionAuthorizer;
+use App\Adapters\DBTransactionLaravel;
 use App\Adapters\DBTransactionFake;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -31,15 +27,14 @@ class TransactionTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizer::class);
+        $transactionAuthorizerMock->method('execute')->willReturn(true);
+
+        $this->app->instance(TransactionAuthorizer::class, $transactionAuthorizerMock);
+        $this->app->instance(DBTransactionLaravel::class, app(DBTransactionFake::class));
+
         $this->personRepository = app(PersonRepository::class);
-        $this->useCase          = new TransferBetweenUsers(
-            app(PersonRepository::class),
-            app(TransactionRepository::class),
-            app(WalletRepository::class),
-            app(UuidGeneratorProvider::class),
-            app(TransactionAuthorizerTrue::class),
-            app(DBTransactionFake::class)
-        );
+        $this->useCase          = app(TransferBetweenUsers::class);
     }
 
     /**
@@ -47,8 +42,13 @@ class TransactionTest extends TestCase
      */
     public function test_transfer_success(): void
     {
+        $personId = 5;
+        $personEntity = $this->personRepository->get($personId);
+        $personEntity->changeDocumentType(PersonDocumentType::CPF);
+        $this->personRepository->save($personEntity);
+
         $input = new TransactionDTO(
-            person_origin_id: 4,
+            person_origin_id: $personId,
             person_destination_id: 2,
             type: TransactionTypes::TRANSFER->value,
             amount: 10
@@ -85,6 +85,8 @@ class TransactionTest extends TestCase
     {
         $personId     = 2;
         $personEntity = $this->personRepository->get($personId);
+        $personEntity->changeDocumentType(PersonDocumentType::CPF);
+        $this->personRepository->save($personEntity);
         $balance      = $personEntity->getWallet()->getBalance();
 
         $input = new TransactionDTO(
@@ -103,17 +105,18 @@ class TransactionTest extends TestCase
      */
     public function test_transfer_with_transaction_authorizer_false(): void
     {
-        $useCase = new TransferBetweenUsers(
-            app(PersonRepository::class),
-            app(TransactionRepository::class),
-            app(WalletRepository::class),
-            app(UuidGeneratorProvider::class),
-            app(TransactionAuthorizerFalse::class),
-            app(DBTransactionFake::class)
-        );
+        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizer::class);
+        $transactionAuthorizerMock->method('execute')->willReturn(false);
+        $this->app->instance(TransactionAuthorizer::class, $transactionAuthorizerMock);
+
+        $useCase      = app(TransferBetweenUsers::class);
+        $personId     = 4;
+        $personEntity = $this->personRepository->get($personId);
+        $personEntity->changeDocumentType(PersonDocumentType::CPF);
+        $this->personRepository->save($personEntity);
 
         $input = new TransactionDTO(
-            person_origin_id: 4,
+            person_origin_id: $personId,
             person_destination_id: 2,
             type: TransactionTypes::TRANSFER->value,
             amount: 10
@@ -128,8 +131,16 @@ class TransactionTest extends TestCase
      */
     public function test_transfer_integrity_with_proccess_failed_in_middle(): void
     {
-        $idOrigin = 2;
-        $idDest   = 3;
+        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizer::class);
+        $transactionAuthorizerMock->method('execute')->willReturn(false);
+        $this->app->instance(TransactionAuthorizer::class, $transactionAuthorizerMock);
+
+        $useCase      = app(TransferBetweenUsers::class);
+        $idOrigin     = 2;
+        $idDest       = 3;
+        $personEntity = $this->personRepository->get($idOrigin);
+        $personEntity->changeDocumentType(PersonDocumentType::CPF);
+        $this->personRepository->save($personEntity);
 
         $walletValueOrigin = $this->personRepository->get($idOrigin)->getWallet()->getBalance();
         $walletValueDest   = $this->personRepository->get($idDest)->getWallet()->getBalance();
@@ -139,15 +150,6 @@ class TransactionTest extends TestCase
             person_destination_id: $idDest,
             type: TransactionTypes::TRANSFER->value,
             amount: $walletValueOrigin - 1
-        );
-
-        $useCase = new TransferBetweenUsers(
-            app(PersonRepository::class),
-            app(TransactionRepository::class),
-            app(WalletRepository::class),
-            app(UuidGeneratorProvider::class),
-            app(TransactionAuthorizerFalse::class),
-            app(DBTransactionProvider::class)
         );
 
         try {
