@@ -14,6 +14,7 @@ use App\Repositories\PersonRepository;
 use App\Adapters\Gateways\TransactionAuthorizerGateway;
 use App\Adapters\DBTransactionLaravel;
 use App\Adapters\DBTransactionFake;
+use App\Adapters\Gateways\NotificationGateway;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TransactionTest extends TestCase
@@ -29,7 +30,11 @@ class TransactionTest extends TestCase
         $transactionAuthorizerMock = $this->createMock(TransactionAuthorizerGateway::class);
         $transactionAuthorizerMock->method('execute')->willReturn(true);
 
+        $notificationMock = $this->createMock(NotificationGateway::class);
+        $notificationMock->method('send')->willReturn(true);
+
         $this->app->instance(TransactionAuthorizerGateway::class, $transactionAuthorizerMock);
+        $this->app->instance(NotificationGateway::class, $notificationMock);
         $this->app->instance(DBTransactionLaravel::class, app(DBTransactionFake::class));
 
         $this->personRepository = app(PersonRepository::class);

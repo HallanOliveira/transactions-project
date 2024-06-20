@@ -9,7 +9,7 @@ use Core\Enums\PersonDocumentType;
 use App\Adapters\Gateways\TransactionAuthorizerGateway;
 use App\Adapters\DBTransactionFake;
 use App\Adapters\DBTransactionLaravel;
-
+use App\Adapters\Gateways\NotificationGateway;
 
 class TransactionApiTest extends TestCase
 {
@@ -26,7 +26,11 @@ class TransactionApiTest extends TestCase
         $transactionAuthorizerMock = $this->createMock(TransactionAuthorizerGateway::class);
         $transactionAuthorizerMock->method('execute')->willReturn(true);
 
+        $notificationMock = $this->createMock(NotificationGateway::class);
+        $notificationMock->method('send')->willReturn(true);
+
         $this->app->instance(TransactionAuthorizerGateway::class, $transactionAuthorizerMock);
+        $this->app->instance(NotificationGateway::class, $notificationMock);
         $this->app->instance(DBTransactionLaravel::class, app(DBTransactionFake::class));
     }
 

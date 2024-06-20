@@ -18,9 +18,9 @@ class NotificationTest extends TestCase
 {
     use DatabaseTransactions;
 
-    protected TransferBetweenUsers     $useCaseTransfer;
-    protected TransactionRepository    $transactionRepository;
-    protected PersonRepository         $personRepository;
+    protected TransferBetweenUsers  $useCaseTransfer;
+    protected TransactionRepository $transactionRepository;
+    protected PersonRepository      $personRepository;
 
     public function setUp(): void
     {

@@ -29,12 +29,12 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
     </php>
-    <!-- <coverage includeUncoveredFiles="true"
+    <coverage includeUncoveredFiles="true"
           pathCoverage="false"
           ignoreDeprecatedCodeUnits="true"
           disableCodeCoverageIgnore="true">
         <report>
             <html outputDirectory="html-coverage" lowUpperBound="50" highLowerBound="90"/>
         </report>
-    </coverage> -->
+    </coverage>
 </phpunit>
