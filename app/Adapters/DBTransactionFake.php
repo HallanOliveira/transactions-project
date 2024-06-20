@@ -5,7 +5,7 @@ namespace App\Adapters;
 use Core\Ports\DBTransactionProvider;
 use Illuminate\Database\DatabaseManager;
 
-class DBTransactionLaravel implements DBTransactionProvider
+class DBTransactionFake implements DBTransactionProvider
 {
     protected $dataBase;
 
