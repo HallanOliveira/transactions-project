@@ -1,4 +1,4 @@
-# 🔁 Transactions Project
+# 🔁 Transactions Project 
 
 ## 📄 Resume
 This is a basic project to simulate bank transactions.
