@@ -19,7 +19,7 @@ git clone https://github.com/HallanOliveira/transactions-project.git
 cd transactions-project
 ```
 ```
-sh ./scripts/build.sh
+sh ./scripts/build-local.sh
 ```
 
 #### Run tests
