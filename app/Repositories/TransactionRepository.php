@@ -8,9 +8,9 @@ use Core\Ports\TransactionRepository as TransactionRepositoryInterface;
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
-    public function get(string $id): ?EntityTransaction
+    public function get(string $transactionId): ?EntityTransaction
     {
-        $transaction = Transaction::find($id);
+        $transaction = Transaction::find($transactionId);
         if (empty($transaction)) {
             return null;
         }

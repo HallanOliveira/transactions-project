@@ -13,7 +13,7 @@ class SendNotification implements ShouldQueue
      * Create the event listener.
      */
     public function __construct(
-        private readonly SendNotificationTransfer $sendNotificationTransfer
+        private readonly SendNotificationTransfer $useCauseNotify
     )
     {
     }
@@ -23,7 +23,7 @@ class SendNotification implements ShouldQueue
      */
     public function handle(TransferCompleted $event): void
     {
-        $this->sendNotificationTransfer->execute($event->transactionDTO);
+        $this->useCauseNotify->execute($event->transactionDTO);
     }
 
     /**
@@ -31,6 +31,9 @@ class SendNotification implements ShouldQueue
      */
     public function failed(TransferCompleted $event, Throwable $exception): void
     {
-        // ...
+        logger()->error('Failed to send notification', [
+            'event' => $event,
+            'exception' => $exception,
+        ]);
     }
 }

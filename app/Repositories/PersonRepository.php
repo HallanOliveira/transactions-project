@@ -9,9 +9,9 @@ use Core\Ports\PersonRepository as PersonRepositoryInterface;
 
 class PersonRepository implements PersonRepositoryInterface
 {
-    public function get(int $id, $relations = []): ?EntityPerson
+    public function get(int $idPerson, $relations = []): ?EntityPerson
     {
-        $person = Person::with($relations)->find($id);
+        $person = Person::with($relations)->find($idPerson);
         if (empty($person)) {
             return null;
         }

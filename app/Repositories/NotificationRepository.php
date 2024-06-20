@@ -8,9 +8,9 @@ use App\Models\Notification;
 
 class NotificationRepository implements NotificationRepositoryInterface
 {
-    public function get(string $id): ?EntityNotification
+    public function get(string $idNotification): ?EntityNotification
     {
-        $notification = Notification::find($id);
+        $notification = Notification::find($idNotification);
         if (empty($notification)) {
             return null;
         }

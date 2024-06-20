@@ -8,9 +8,9 @@ use Core\Ports\WalletRepository as WalletRepositoryInterface;
 
 class WalletRepository implements WalletRepositoryInterface
 {
-    public function get(int $id): ?EntityWallet
+    public function get(int $idWallet): ?EntityWallet
     {
-        $wallet = Wallet::find($id);
+        $wallet = Wallet::find($idWallet);
 
         return empty($wallet)
             ? null
