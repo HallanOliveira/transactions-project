@@ -37,5 +37,4 @@ jobs:
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
-        QUEUE_CONNECTION: redis
       run: php artisan test
