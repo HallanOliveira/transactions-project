@@ -8,7 +8,7 @@ use Core\Ports\TransactionRepository as TransactionRepositoryInterface;
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
-    public function get(int $id): ?EntityTransaction
+    public function get(string $id): ?EntityTransaction
     {
         $transaction = Transaction::find($id);
         if (empty($transaction)) {
@@ -33,10 +33,5 @@ class TransactionRepository implements TransactionRepositoryInterface
             'amount'                => $transaction->getAmount(),
             'person_destination_id' => $transaction->getPersonDestinationId(),
         ],'id');
-    }
-
-    public function saveNew(EntityTransaction $transaction): bool
-    {
-        return true;
     }
 }

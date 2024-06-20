@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Adapters\Api;
+namespace App\Adapters\Gateways;
 
 use Core\Ports\TransactionAuthorizerProvider;
 use Illuminate\Support\Facades\Http;
 
-class TransactionAuthorizer implements TransactionAuthorizerProvider
+class TransactionAuthorizerGateway implements TransactionAuthorizerProvider
 {
     private string $url;
 

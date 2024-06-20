@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use \Illuminate\Http\JsonResponse;
 use \Exception;
-use Core\Exceptions\PersonTypeInvalidException;
-use Core\Exceptions\DataNotFoundException;
 
 class BaseApiController extends Controller
 {
@@ -33,24 +31,6 @@ class BaseApiController extends Controller
     {
         return response()->json([
             'error' => $exception->getMessage()
-        ], $this->statusCodeByException($exception));
-    }
-
-    /**
-     * Map status http code error by exceptions
-     *
-     * @param Exception $exception
-     * @return int
-     */
-    private function statusCodeByException(Exception $exception): int
-    {
-        switch ($exception) {
-            case $exception instanceof PersonTypeInvalidException:
-                return 400;
-            case $exception instanceof DataNotFoundException:
-                return 404;
-            default:
-                return 500;
-        }
+        ], $exception->getCode());
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Requests\TranferApiRequest;
 use Core\DTOs\TransactionDTO;
-use Core\Enums\TransactionTypes;
+use Core\Enums\TransactionType;
 use Core\UseCases\TransferBetweenUsers;
 use Exception;
 
@@ -23,7 +23,7 @@ class TransactionController extends BaseApiController
             $input   = new TransactionDTO(
                 person_origin_id: $payload['payer'],
                 person_destination_id: $payload['payee'] ?? null,
-                type: TransactionTypes::TRANSFER->value,
+                type: TransactionType::TRANSFER->value,
                 amount: $payload['value']
             );
             $output = $transferBetweenUsers->execute($input);

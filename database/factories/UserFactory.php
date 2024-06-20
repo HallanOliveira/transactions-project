@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'person_id'         => $this->faker->unique()->randomNumber(),
             'password'          => static::$password ??= Hash::make('password'),
             'remember_token'    => Str::random(10),
+            'phone'             => $this->faker->randomElement([null, $this->faker->numerify('###########')]),
         ];
     }
 

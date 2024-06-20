@@ -2,11 +2,9 @@
 
 namespace Core\UseCases;
 
-use Core\Entities\Transaction;
 use Core\DTOs\TransactionDTO;
+use Core\Entities\Transaction;
 use Core\Entities\Person;
-use Core\Exceptions\DataNotFoundException;
-use Core\Exceptions\TransactionFailedException;
 use Core\Ports\PersonRepository;
 use Core\Ports\TransactionRepository;
 use Core\Ports\UuidGeneratorProvider;
@@ -14,6 +12,10 @@ use Core\Ports\WalletRepository;
 use Core\Ports\TransactionAuthorizerProvider;
 use Core\Ports\DBTransactionProvider;
 use Core\Ports\TransferEventDispatcher;
+use Core\Exceptions\DataNotFoundException;
+use Core\Exceptions\TransactionFailedException;
+use Core\Exceptions\TransactionUnauthorizedException;
+
 class TransferBetweenUsers
 {
     public function __construct(
@@ -53,7 +55,7 @@ class TransferBetweenUsers
 
         if (! $this->authorizerTransactionProvider->execute($transactionEntity)) {
             $this->dbTransactionProvider->rollback();
-            throw new TransactionFailedException('Transaction not authorized.');
+            throw new TransactionUnauthorizedException();
         }
 
         $save   = [];

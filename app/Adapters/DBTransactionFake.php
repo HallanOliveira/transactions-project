@@ -3,22 +3,29 @@
 namespace App\Adapters;
 
 use Core\Ports\DBTransactionProvider;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\DatabaseManager;
 
-class DBTransactionFake implements DBTransactionProvider
+class DBTransactionLaravel implements DBTransactionProvider
 {
+    protected $dataBase;
+
+    public function __construct(DatabaseManager $dataBase)
+    {
+        $this->dataBase = $dataBase;
+    }
+
     public function beginTransaction(): void
     {
-        DB::beginTransaction();
+        $this->dataBase->connection()->beginTransaction();
     }
 
     public function commit(): void
     {
-        // do nothing
+        // nothing to do here
     }
 
     public function rollback(): void
     {
-        // do nothing
+        $this->dataBase->connection()->rollBack();
     }
 }

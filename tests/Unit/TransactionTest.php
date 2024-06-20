@@ -5,17 +5,16 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Core\UseCases\TransferBetweenUsers;
 use Core\DTOs\TransactionDTO;
-use Core\Enums\TransactionTypes;
+use Core\Enums\TransactionType;
 use Core\Enums\PersonDocumentType;
 use Core\Exceptions\PersonTypeInvalidException;
 use Core\Exceptions\InsufficientBalanceException;
-use Core\Exceptions\TransactionFailedException;
+use Core\Exceptions\TransactionUnauthorizedException;
 use App\Repositories\PersonRepository;
-use App\Adapters\Api\TransactionAuthorizer;
+use App\Adapters\Gateways\TransactionAuthorizerGateway;
 use App\Adapters\DBTransactionLaravel;
 use App\Adapters\DBTransactionFake;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-
 
 class TransactionTest extends TestCase
 {
@@ -27,10 +26,10 @@ class TransactionTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizer::class);
+        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizerGateway::class);
         $transactionAuthorizerMock->method('execute')->willReturn(true);
 
-        $this->app->instance(TransactionAuthorizer::class, $transactionAuthorizerMock);
+        $this->app->instance(TransactionAuthorizerGateway::class, $transactionAuthorizerMock);
         $this->app->instance(DBTransactionLaravel::class, app(DBTransactionFake::class));
 
         $this->personRepository = app(PersonRepository::class);
@@ -50,7 +49,7 @@ class TransactionTest extends TestCase
         $input = new TransactionDTO(
             person_origin_id: $personId,
             person_destination_id: 2,
-            type: TransactionTypes::TRANSFER->value,
+            type: TransactionType::TRANSFER->value,
             amount: 10
         );
         $output = $this->useCase->execute($input);
@@ -70,7 +69,7 @@ class TransactionTest extends TestCase
         $input = new TransactionDTO(
             person_origin_id: $personId,
             person_destination_id: 2,
-            type: TransactionTypes::TRANSFER->value,
+            type: TransactionType::TRANSFER->value,
             amount: 10
         );
         $this->expectException(PersonTypeInvalidException::class);
@@ -92,7 +91,7 @@ class TransactionTest extends TestCase
         $input = new TransactionDTO(
             person_origin_id: $personId,
             person_destination_id: 2,
-            type: TransactionTypes::TRANSFER->value,
+            type: TransactionType::TRANSFER->value,
             amount: $balance + 1
         );
         $this->expectException(InsufficientBalanceException::class);
@@ -105,9 +104,9 @@ class TransactionTest extends TestCase
      */
     public function test_transfer_with_transaction_authorizer_false(): void
     {
-        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizer::class);
+        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizerGateway::class);
         $transactionAuthorizerMock->method('execute')->willReturn(false);
-        $this->app->instance(TransactionAuthorizer::class, $transactionAuthorizerMock);
+        $this->app->instance(TransactionAuthorizerGateway::class, $transactionAuthorizerMock);
 
         $useCase      = app(TransferBetweenUsers::class);
         $personId     = 4;
@@ -118,10 +117,10 @@ class TransactionTest extends TestCase
         $input = new TransactionDTO(
             person_origin_id: $personId,
             person_destination_id: 2,
-            type: TransactionTypes::TRANSFER->value,
+            type: TransactionType::TRANSFER->value,
             amount: 10
         );
-        $this->expectException(TransactionFailedException::class);
+        $this->expectException(TransactionUnauthorizedException::class);
         $useCase->execute($input);
         $this->fail('Transaction should not be authorized.');
     }
@@ -131,9 +130,9 @@ class TransactionTest extends TestCase
      */
     public function test_transfer_integrity_with_proccess_failed_in_middle(): void
     {
-        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizer::class);
+        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizerGateway::class);
         $transactionAuthorizerMock->method('execute')->willReturn(false);
-        $this->app->instance(TransactionAuthorizer::class, $transactionAuthorizerMock);
+        $this->app->instance(TransactionAuthorizerGateway::class, $transactionAuthorizerMock);
 
         $useCase      = app(TransferBetweenUsers::class);
         $idOrigin     = 2;
@@ -148,7 +147,7 @@ class TransactionTest extends TestCase
         $input = new TransactionDTO(
             person_origin_id: $idOrigin,
             person_destination_id: $idDest,
-            type: TransactionTypes::TRANSFER->value,
+            type: TransactionType::TRANSFER->value,
             amount: $walletValueOrigin - 1
         );
 

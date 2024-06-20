@@ -34,4 +34,8 @@ return [
     'transaction_authorizer' => [
         'url' => env('TRANSACTION_AUTHORIZER_URL'),
     ],
+
+    'notification' => [
+        'url' => env('NOTIFICATION_URL'),
+    ],
 ];

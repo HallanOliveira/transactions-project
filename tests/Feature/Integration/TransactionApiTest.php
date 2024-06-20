@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Repositories\PersonRepository;
 use App\Repositories\WalletRepository;
 use Core\Enums\PersonDocumentType;
-use App\Adapters\Api\TransactionAuthorizer;
+use App\Adapters\Gateways\TransactionAuthorizerGateway;
 use App\Adapters\DBTransactionFake;
 use App\Adapters\DBTransactionLaravel;
 
@@ -23,10 +23,10 @@ class TransactionApiTest extends TestCase
         $this->personRepository = new PersonRepository();
         $this->walletRepository = new WalletRepository();
 
-        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizer::class);
+        $transactionAuthorizerMock = $this->createMock(TransactionAuthorizerGateway::class);
         $transactionAuthorizerMock->method('execute')->willReturn(true);
 
-        $this->app->instance(TransactionAuthorizer::class, $transactionAuthorizerMock);
+        $this->app->instance(TransactionAuthorizerGateway::class, $transactionAuthorizerMock);
         $this->app->instance(DBTransactionLaravel::class, app(DBTransactionFake::class));
     }
 

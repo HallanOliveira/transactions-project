@@ -3,16 +3,18 @@
 namespace App\Listeners;
 
 use App\Events\TransferCompleted;
+use Core\UseCases\SendNotificationTransfer;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Throwable;
 
-class SendNotification
+class SendNotification implements ShouldQueue
 {
     /**
      * Create the event listener.
      */
-    public function __construct()
+    public function __construct(
+        private readonly SendNotificationTransfer $sendNotificationTransfer
+    )
     {
     }
 
@@ -21,7 +23,7 @@ class SendNotification
      */
     public function handle(TransferCompleted $event): void
     {
-        // ...
+        $this->sendNotificationTransfer->execute($event->transactionDTO);
     }
 
     /**

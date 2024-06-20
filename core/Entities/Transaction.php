@@ -42,6 +42,12 @@ class Transaction
         $destinationPerson->getWallet()->deposit($this->amount);
     }
 
+    public function getMessageNotifyTransfer(Person $originPerson, Person $destinationPerson): string
+    {
+        return "Hello {$originPerson->getName()}!"
+            . " You received a transfer of \${$this->amount} from {$destinationPerson->getName()} on you wallet.";
+    }
+
     public function getId(): string
     {
         return $this->id;

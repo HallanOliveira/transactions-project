@@ -18,20 +18,21 @@ class PersonRepository implements PersonRepositoryInterface
         $wallet = null;
         if (! empty($person->wallet)) {
             $wallet = new EntityWallet(
-                $person->wallet->id,
-                $person->wallet->balance,
-                $person->wallet->person_id,
-                $person->wallet->created_at
+                id: $person->wallet->id,
+                balance: $person->wallet->balance,
+                person_id: $person->wallet->person_id,
+                created_at: $person->wallet->created_at
             );
         }
         return new EntityPerson(
-                $person->id,
-                $person->name,
-                $person->document_number,
-                $person->document_type,
-                $person->created_at,
-                $wallet
-            );
+            id: $person->id,
+            name: $person->name,
+            document_number: $person->document_number,
+            document_type: $person->document_type,
+            phone: $person->phone,
+            created_at: $person->created_at,
+            wallet: $wallet
+        );
     }
 
     public function save(EntityPerson $person): bool

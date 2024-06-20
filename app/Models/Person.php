@@ -28,4 +28,9 @@ class Person extends Model
     {
         return $this->hasOne(Wallet::class);
     }
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class);
+    }
 }

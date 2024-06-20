@@ -6,9 +6,11 @@ use Illuminate\Support\ServiceProvider;
 use Core\Ports\UuidGeneratorProvider;
 use Core\Ports\TransactionAuthorizerProvider;
 use Core\Ports\DBTransactionProvider;
+use Core\Ports\NotificationProvider;
 use App\Adapters\UuidGenerator;
-use App\Adapters\Api\TransactionAuthorizer;
 use App\Adapters\DBTransactionLaravel;
+use App\Adapters\Gateways\NotificationGateway;
+use App\Adapters\Gateways\TransactionAuthorizerGateway;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,8 +20,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(UuidGeneratorProvider::class, UuidGenerator::class);
-        $this->app->bind(TransactionAuthorizerProvider::class, TransactionAuthorizer::class);
         $this->app->bind(DBTransactionProvider::class, DBTransactionLaravel::class);
+        $this->app->bind(TransactionAuthorizerProvider::class, TransactionAuthorizerGateway::class);
+        $this->app->bind(NotificationProvider::class, NotificationGateway::class);
     }
 
     /**

@@ -12,6 +12,7 @@ class Person
         private string  $name,
         private string  $document_number,
         private int     $document_type,
+        private ?string $phone,
         private string  $created_at,
         private ?Wallet $wallet
     ) {
@@ -31,32 +32,42 @@ class Person
         return ! $this->isDealerType();
     }
 
-    public function getId()
+    public function hasPhone(): bool
+    {
+        return ! empty($this->phone);
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getDocumentNumber()
+    public function getDocumentNumber(): string
     {
         return $this->document_number;
     }
 
-    public function getDocumentType()
+    public function getDocumentType(): int
     {
         return $this->document_type;
     }
 
-    public function getCreatedAt()
+    public function getCreatedAt(): string
     {
         return $this->created_at;
     }
 
-    public function getWallet()
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function getWallet(): ?Wallet
     {
         return $this->wallet;
     }

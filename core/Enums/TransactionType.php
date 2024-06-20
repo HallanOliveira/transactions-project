@@ -2,7 +2,7 @@
 
 namespace Core\Enums;
 
-Enum TransactionTypes: int
+Enum TransactionType: int
 {
     case TRANSFER = 1;
     case DEPOSIT  = 2;
