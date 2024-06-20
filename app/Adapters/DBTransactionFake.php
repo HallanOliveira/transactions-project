@@ -7,9 +7,7 @@ use Illuminate\Database\DatabaseManager;
 
 class DBTransactionFake implements DBTransactionProvider
 {
-    protected $dataBase;
-
-    public function __construct(DatabaseManager $dataBase)
+    public function __construct(private DatabaseManager $dataBase)
     {
         $this->dataBase = $dataBase;
     }
